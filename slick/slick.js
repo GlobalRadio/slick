@@ -148,7 +148,11 @@
 
             _.options = $.extend({}, _.defaults, settings, dataSettings);
 
-            _.currentSlide = _.options.initialSlide;
+            _.currentSlide = _.calculateInitialOffset(
+                _.options.initialSlide,
+                _.options.slidesToShow,
+                _.options.centerMode
+            );
 
             _.originalSettings = _.options;
 
@@ -187,6 +191,14 @@
         return Slick;
 
     }());
+
+    Slick.prototype.calculateInitialOffset = function(initial, slides, centerMode) {
+        var currentSlide = initial;
+        if (!centerMode && initial > 0) {
+            currentSlide = Math.floor(initial / slides) * slides;
+        }
+        return currentSlide;
+    }
 
     Slick.prototype.activateADA = function() {
         var _ = this;
@@ -639,7 +651,11 @@
                                 _.breakpointSettings[
                                     targetBreakpoint]);
                             if (initial === true) {
-                                _.currentSlide = _.options.initialSlide;
+                                _.currentSlide = _.calculateInitialOffset(
+                                    _.options.initialSlide,
+                                    _.options.slidesToShow,
+                                    _.options.centerMode
+                                );
                             }
                             _.refresh(initial);
                         }
@@ -654,7 +670,11 @@
                             _.breakpointSettings[
                                 targetBreakpoint]);
                         if (initial === true) {
-                            _.currentSlide = _.options.initialSlide;
+                            _.currentSlide = _.calculateInitialOffset(
+                                _.options.initialSlide,
+                                _.options.slidesToShow,
+                                _.options.centerMode
+                            );
                         }
                         _.refresh(initial);
                     }
@@ -665,7 +685,11 @@
                     _.activeBreakpoint = null;
                     _.options = _.originalSettings;
                     if (initial === true) {
-                        _.currentSlide = _.options.initialSlide;
+                        _.currentSlide = _.calculateInitialOffset(
+                            _.options.initialSlide,
+                            _.options.slidesToShow,
+                            _.options.centerMode
+                        );
                     }
                     _.refresh(initial);
                     triggerBreakpoint = targetBreakpoint;
@@ -1019,7 +1043,7 @@
             .off('focus.slick blur.slick')
             .on(
                 'focus.slick',
-                '*', 
+                '*',
                 function(event) {
                     var $sf = $(this);
 
@@ -1034,7 +1058,7 @@
                 }
             ).on(
                 'blur.slick',
-                '*', 
+                '*',
                 function(event) {
                     var $sf = $(this);
 
